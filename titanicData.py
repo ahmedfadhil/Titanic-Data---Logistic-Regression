@@ -3,11 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import cufflinks as cf
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 
 train = pd.read_csv('titanic_train.csv')
 train.head()
 # sns.heatmap(train.isnull(), yticklabels=False, cbar=False, cmap='viridis')
-sns.set_style('whitegrid')
+# sns.set_style('whitegrid')
 # sns.countplot(data=train, x='Survived',hue='Sex',palette='RdBu_r')
 # sns.countplot(data=train, x='Survived', hue='Pclass')
 # sns.distplot(train['Age'].dropna(), kde=False, bins=30)
@@ -61,3 +65,20 @@ train.head()
 train.tail()
 
 train.drop(['PassengerId'], axis=1, inplace=True)
+
+# All the features
+X = train.drop('Survived', axis=1)
+
+# The prediction of our model
+y = train['Survived']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+logmodel = LogisticRegression()
+logmodel.fit(X_train, y_train)
+
+predictions = logmodel.predict(X_test)
+
+print(classification_report(y_test, predictions))
+
+print(confusion_matrix(y_test, predictions))
